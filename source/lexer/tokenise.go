@@ -13,7 +13,6 @@ type Lexer struct {
 func NewLexer(code []rune) *Lexer {
 	return &Lexer{
 		code: code,
-
 		idx:      -1,
 		position: NewPosition(-1, -1),
 		current:  nil,
@@ -23,7 +22,6 @@ func NewLexer(code []rune) *Lexer {
 // nextCharacter shifts to the next character in the sequence.
 func (l *Lexer) nextCharacter() {
 	l.idx++
-	l.position.x++
 
 	if l.idx >= len(l.code) {
 		l.current = nil
@@ -36,6 +34,8 @@ func (l *Lexer) nextCharacter() {
 		l.position.x = 0
 		l.position.y++
 	}
+
+	l.position.x++
 }
 
 // peekNextCharacter returns the next character in the sequence without enforcing the change.
