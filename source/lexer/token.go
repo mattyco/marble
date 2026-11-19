@@ -20,5 +20,5 @@ func NewToken(ttype TokenType, value string, position *Position) *Token {
 
 // String returns the string representation of the token.
 func (t *Token) String() string {
-	return fmt.Sprintf("type: %d position: (%s)", t.Type, t.Position.String())
+	return fmt.Sprintf("type: %d \"%s\" position: (%s)", t.Type, t.value, t.Position.String())
 }
