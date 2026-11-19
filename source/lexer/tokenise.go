@@ -199,6 +199,9 @@ func (l *Lexer) Tokenise() ([]*Token, errors.Error) {
 		case ':':
 			tokens = append(tokens, NewToken(TokColon, string(*l.current), l.position))
 			l.nextCharacter()
+		case '@':
+			tokens = append(tokens, NewToken(TokAt, string(*l.current), l.position))
+			l.nextCharacter()
 		default:
 			if *l.current == '"' {
 				tok, err := l.buildString()
