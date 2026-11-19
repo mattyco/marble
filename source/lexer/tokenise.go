@@ -3,6 +3,9 @@ package lexer
 import (
 	"fmt"
 	"unicode"
+
+	"github.com/mattyco/marble/source/errors"
+	"github.com/mattyco/marble/source/position"
 )
 
 // Lexer reads through the code block and tokenises it into parseable tokens.
@@ -10,7 +13,7 @@ type Lexer struct {
 	code []rune
 	idx  int
 
-	position *Position
+	position *position.Position
 	current  *rune
 }
 
@@ -19,7 +22,7 @@ func NewLexer(code []rune) *Lexer {
 	return &Lexer{
 		code:     code,
 		idx:      -1,
-		position: NewPosition(-1, -1),
+		position: position.NewPosition(-1, -1),
 		current:  nil,
 	}
 }
@@ -36,11 +39,11 @@ func (l *Lexer) nextCharacter() {
 	l.current = &l.code[l.idx]
 
 	if *l.current == '\n' {
-		l.position.x = 0
-		l.position.y++
+		l.position.X = 0
+		l.position.Y++
 	}
 
-	l.position.x++
+	l.position.X++
 }
 
 // peekNextCharacter returns the next character in the sequence without enforcing the change.
@@ -64,17 +67,17 @@ func (l *Lexer) matchNextCharacter(want rune) (*rune, bool) {
 }
 
 // Tokenise converts the plan-text into parseable tokens.
-func (l *Lexer) Tokenise() ([]*Token, error) {
+func (l *Lexer) Tokenise() ([]*Token, errors.Error) {
 	if l.position == nil {
 		// This ensures that the position of the token can be stored as intended, and also so that
 		// the nextCharacter function can process the position instead of dereferencing a nilpointer.
-		l.position = NewPosition(-1, -1)
+		l.position = position.NewPosition(-1, -1)
 	}
 
 	if l.idx != -1 {
 		// this is so it starts properly from the beginning of the code block.
 		l.idx = -1
-		l.position = NewPosition(-1, -1)
+		l.position = position.NewPosition(-1, -1)
 	}
 
 	// start at index 0, with the initial character.
@@ -147,7 +150,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 				continue
 			}
 
-			return nil, fmt.Errorf("unexpected token '%s' at %s", string(*l.current), l.position.String())
+			return nil, &errors.SyntaxError{Message: fmt.Sprintf("unexpected token '%s'", string(*l.current)), Position: l.position.Clone()}
 		case '|':
 			if next, ok := l.matchNextCharacter('|'); ok {
 				tokens = append(tokens, NewToken(TokOr, string(*l.current)+string(*next), l.position))
@@ -156,7 +159,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 				continue
 			}
 
-			return nil, fmt.Errorf("unexpected token '%s' at %s", string(*l.current), l.position.String())
+			return nil, &errors.SyntaxError{Message: fmt.Sprintf("unexpected token '%s'", string(*l.current)), Position: l.position.Clone()}
 		case '%':
 			tokens = append(tokens, NewToken(TokMod, string(*l.current), l.position))
 			l.nextCharacter()
@@ -167,7 +170,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 			tokens = append(tokens, NewToken(TokMinus, string(*l.current), l.position))
 			l.nextCharacter()
 		case '*':
-			tokens = append(tokens, NewToken(TokMinus, string(*l.current), l.position))
+			tokens = append(tokens, NewToken(TokMultiply, string(*l.current), l.position))
 			l.nextCharacter()
 		case '(':
 			tokens = append(tokens, NewToken(TokLeftParen, string(*l.current), l.position))
@@ -188,10 +191,10 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 			tokens = append(tokens, NewToken(TokRightBrace, string(*l.current), l.position))
 			l.nextCharacter()
 		case '.':
-			tokens = append(tokens, NewToken(TokRightBrace, string(*l.current), l.position))
+			tokens = append(tokens, NewToken(TokDot, string(*l.current), l.position))
 			l.nextCharacter()
 		case ',':
-			tokens = append(tokens, NewToken(TokRightBrace, string(*l.current), l.position))
+			tokens = append(tokens, NewToken(TokComma, string(*l.current), l.position))
 			l.nextCharacter()
 		case ':':
 			tokens = append(tokens, NewToken(TokColon, string(*l.current), l.position))
@@ -225,7 +228,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 				continue
 			}
 
-			return nil, fmt.Errorf("unexepcted token '%s' at %s", string(*l.current), l.position.String())
+			return nil, &errors.SyntaxError{Message: fmt.Sprintf("unexpected token '%s'", string(*l.current)), Position: l.position.Clone()}
 		}
 	}
 
