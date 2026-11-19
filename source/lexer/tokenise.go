@@ -49,7 +49,32 @@ func (l *Lexer) peekNextCharacter() *rune {
 
 // Tokenise converts the plan-text into parseable tokens.
 func (l *Lexer) Tokenise() ([]*Token, error) {
+	if l.position == nil {
+		// This ensures that the position of the token can be stored as intended, and also so that
+		// the nextCharacter function can process the position instead of dereferencing a nilpointer.
+		l.position = NewPosition(-1, -1)
+	}
+
+	if l.idx != -1 {
+		// this is so it starts properly from the beginning of the code block.
+		l.idx = -1
+	}
+
+	// start at index 0, with the initial character.
+	l.nextCharacter()
+
 	var tokens []*Token = make([]*Token, 0)
+
+	for l.current != nil {
+		switch *l.current {
+		// Recognised whitespace characters that the lexer ignores.
+		case '\r', '\t', ' ':
+			l.nextCharacter()
+			continue
+		
+		
+		}
+	}
 
 	return tokens, nil
 }
