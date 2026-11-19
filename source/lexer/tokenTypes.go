@@ -35,4 +35,5 @@ const (
 	TokAnd                               // &&
 	TokOr                                // ||
 	TokColon                             // :
+	TokNot                               // !
 )
