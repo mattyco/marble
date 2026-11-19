@@ -1,3 +1,4 @@
 /vendor
 .DS_Store
 *_old.go # obselete files or ones that are being re-written.
+*.marble # marble testing files
