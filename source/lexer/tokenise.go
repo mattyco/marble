@@ -48,7 +48,7 @@ func (l *Lexer) peekNextCharacter() *rune {
 }
 
 // Tokenise converts the plan-text into parseable tokens.
-func (t *Token) Tokenise() ([]*Token, error) {
+func (l *Lexer) Tokenise() ([]*Token, error) {
 	var tokens []*Token = make([]*Token, 0)
 
 	return tokens, nil
