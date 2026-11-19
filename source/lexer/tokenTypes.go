@@ -50,6 +50,7 @@ const (
 	TokAnd                               // &&
 	TokOr                                // ||
 	TokColon                             // :
+	TokAt                                // @
 )
 
 // buildString builds a string token.
