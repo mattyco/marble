@@ -1,26 +1,26 @@
-package lexer
+package position
 
 import "fmt"
 
 // Position contains the x, and y coordinate inside of the code block.
 type Position struct {
-	x, y int
+	X, Y int
 }
 
 // NewPosition creates a new position object.
 func NewPosition(x, y int) *Position {
-	return new(Position)
+	return &Position{X: x, Y: y}
 }
 
 // Clone returns a duplicated position object.
 func (p *Position) Clone() *Position {
 	return &Position{
-		x: p.x,
-		y: p.y,
+		X: p.X,
+		Y: p.Y,
 	}
 }
 
 // String returns the string varient of the position.
 func (p *Position) String() string {
-	return fmt.Sprintf("%d:%d", p.x, p.y)
+	return fmt.Sprintf("line %d, column %d", p.X, p.Y)
 }
