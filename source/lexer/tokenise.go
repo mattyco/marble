@@ -69,6 +69,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 	if l.idx != -1 {
 		// this is so it starts properly from the beginning of the code block.
 		l.idx = -1
+		l.position = NewPosition(-1, -1)
 	}
 
 	// start at index 0, with the initial character.
@@ -92,6 +93,46 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 			}
 
 			tokens = append(tokens, NewToken(TokAsign, string(*l.current), l.position))
+			l.nextCharacter()
+		case '/':
+			if next, ok := l.matchNextCharacter('/'); ok {
+				tokens = append(tokens, NewToken(TokDiv, string(*l.current)+string(*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			tokens = append(tokens, NewToken(TokDivide, string(*l.current), l.position))
+			l.nextCharacter()
+		case '>':
+			if next, ok := l.matchNextCharacter('='); ok {
+				tokens = append(tokens, NewToken(TokGreaterThnEq, string(*l.current)+string(*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			tokens = append(tokens, NewToken(TokGreaterThn, string(*l.current), l.position))
+			l.nextCharacter()
+		case '<':
+			if next, ok := l.matchNextCharacter('='); ok {
+				tokens = append(tokens, NewToken(TokLessThnEq, string(*l.current)+string(*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			tokens = append(tokens, NewToken(TokLessThn, string(*l.current), l.position))
+			l.nextCharacter()
+		case '!':
+			if next, ok := l.matchNextCharacter('='); ok {
+				tokens = append(tokens, NewToken(TokNotEq, string(*l.current)+string(*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			tokens = append(tokens, NewToken(TokBang, string(*l.current), l.position))
 			l.nextCharacter()
 		}
 	}
