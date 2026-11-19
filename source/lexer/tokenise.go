@@ -85,7 +85,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 
 		case '=':
 			if next, ok := l.matchNextCharacter('='); ok {
-				tokens = append(tokens, NewToken(TokEquals, string(*l.current+*next), l.position))
+				tokens = append(tokens, NewToken(TokEquals, string(*l.current)+string(*next), l.position))
 				l.nextCharacter()
 				l.nextCharacter()
 				continue
