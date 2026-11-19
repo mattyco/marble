@@ -1,5 +1,10 @@
 package lexer
 
+import (
+	"fmt"
+	"unicode"
+)
+
 // Lexer reads through the code block and tokenises it into parseable tokens.
 type Lexer struct {
 	code []rune
@@ -12,7 +17,7 @@ type Lexer struct {
 // NewLexer creates a new lexer object.
 func NewLexer(code []rune) *Lexer {
 	return &Lexer{
-		code: code,
+		code:     code,
 		idx:      -1,
 		position: NewPosition(-1, -1),
 		current:  nil,
@@ -80,7 +85,7 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 	for l.current != nil {
 		switch *l.current {
 		// Recognised whitespace characters that the lexer ignores.
-		case '\r', '\t', ' ':
+		case '\r', '\t', ' ', '\n':
 			l.nextCharacter()
 			continue
 
@@ -134,6 +139,93 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 
 			tokens = append(tokens, NewToken(TokBang, string(*l.current), l.position))
 			l.nextCharacter()
+		case '&':
+			if next, ok := l.matchNextCharacter('&'); ok {
+				tokens = append(tokens, NewToken(TokAnd, string(*l.current)+string(*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			return nil, fmt.Errorf("unexpected token '%s' at %s", string(*l.current), l.position.String())
+		case '|':
+			if next, ok := l.matchNextCharacter('|'); ok {
+				tokens = append(tokens, NewToken(TokOr, string(*l.current)+string(*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			return nil, fmt.Errorf("unexpected token '%s' at %s", string(*l.current), l.position.String())
+		case '%':
+			tokens = append(tokens, NewToken(TokMod, string(*l.current), l.position))
+			l.nextCharacter()
+		case '+':
+			tokens = append(tokens, NewToken(TokPlus, string(*l.current), l.position))
+			l.nextCharacter()
+		case '-':
+			tokens = append(tokens, NewToken(TokMinus, string(*l.current), l.position))
+			l.nextCharacter()
+		case '*':
+			tokens = append(tokens, NewToken(TokMinus, string(*l.current), l.position))
+			l.nextCharacter()
+		case '(':
+			tokens = append(tokens, NewToken(TokLeftParen, string(*l.current), l.position))
+			l.nextCharacter()
+		case ')':
+			tokens = append(tokens, NewToken(TokRightParen, string(*l.current), l.position))
+			l.nextCharacter()
+		case '[':
+			tokens = append(tokens, NewToken(TokLeftSquare, string(*l.current), l.position))
+			l.nextCharacter()
+		case ']':
+			tokens = append(tokens, NewToken(TokRightSquare, string(*l.current), l.position))
+			l.nextCharacter()
+		case '{':
+			tokens = append(tokens, NewToken(TokLeftBrace, string(*l.current), l.position))
+			l.nextCharacter()
+		case '}':
+			tokens = append(tokens, NewToken(TokRightBrace, string(*l.current), l.position))
+			l.nextCharacter()
+		case '.':
+			tokens = append(tokens, NewToken(TokRightBrace, string(*l.current), l.position))
+			l.nextCharacter()
+		case ',':
+			tokens = append(tokens, NewToken(TokRightBrace, string(*l.current), l.position))
+			l.nextCharacter()
+		case ':':
+			tokens = append(tokens, NewToken(TokColon, string(*l.current), l.position))
+			l.nextCharacter()
+		default:
+			if *l.current == '"' {
+				tok, err := l.buildString()
+				if err != nil {
+					return nil, err
+				}
+
+				tokens = append(tokens, tok)
+				l.nextCharacter()
+				continue
+			}
+
+			if unicode.IsDigit(*l.current) {
+				tok, err := l.buildNumber()
+				if err != nil {
+					return nil, err
+				}
+
+				tokens = append(tokens, tok)
+				l.nextCharacter()
+				continue
+			}
+
+			if *l.current == '_' || unicode.IsLetter(*l.current) {
+				tokens = append(tokens, l.buildIdentifier())
+				l.nextCharacter()
+				continue
+			}
+
+			return nil, fmt.Errorf("unexepcted token '%s' at %s", string(*l.current), l.position.String())
 		}
 	}
 
