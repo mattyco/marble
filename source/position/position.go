@@ -22,5 +22,5 @@ func (p *Position) Clone() *Position {
 
 // String returns the string varient of the position.
 func (p *Position) String() string {
-	return fmt.Sprintf("line %d, column %d", p.X, p.Y)
+	return fmt.Sprintf("line %d, column %d", p.Y, p.X)
 }
