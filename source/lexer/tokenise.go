@@ -47,6 +47,17 @@ func (l *Lexer) peekNextCharacter() *rune {
 	return nil
 }
 
+// matchNextCharacter matches the current character with a required next character.
+func (l *Lexer) matchNextCharacter(want rune) (*rune, bool) {
+	next := l.peekNextCharacter()
+
+	if next != nil && *next == want {
+		return next, true
+	}
+
+	return nil, false
+}
+
 // Tokenise converts the plan-text into parseable tokens.
 func (l *Lexer) Tokenise() ([]*Token, error) {
 	if l.position == nil {
@@ -71,8 +82,17 @@ func (l *Lexer) Tokenise() ([]*Token, error) {
 		case '\r', '\t', ' ':
 			l.nextCharacter()
 			continue
-		
-		
+
+		case '=':
+			if next, ok := l.matchNextCharacter('='); ok {
+				tokens = append(tokens, NewToken(TokEquals, string(*l.current+*next), l.position))
+				l.nextCharacter()
+				l.nextCharacter()
+				continue
+			}
+
+			tokens = append(tokens, NewToken(TokAsign, string(*l.current), l.position))
+			l.nextCharacter()
 		}
 	}
 
