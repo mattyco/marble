@@ -18,6 +18,7 @@ type BaseError struct {
 	Position *position.Position
 }
 
+// String returns the error in a string format; "Name: message at line 1, column 1".
 func (b *BaseError) String() string {
 	return fmt.Sprintf("%s: %s at %s", b.Name, b.Message, b.Position.String())
 }
