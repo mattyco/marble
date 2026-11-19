@@ -1,9 +1,10 @@
 package lexer
 
 import (
-	"fmt"
 	"slices"
 	"unicode"
+
+	"github.com/mattyco/marble/source/errors"
 )
 
 // TokenType represents an individual lexer token.
@@ -49,11 +50,10 @@ const (
 	TokAnd                               // &&
 	TokOr                                // ||
 	TokColon                             // :
-	TokNot                               // !
 )
 
 // buildString builds a string token.
-func (l *Lexer) buildString() (*Token, error) {
+func (l *Lexer) buildString() (*Token, errors.Error) {
 	tok := NewToken(TokString, "", l.position)
 
 	var value []rune
@@ -65,28 +65,28 @@ func (l *Lexer) buildString() (*Token, error) {
 		l.nextCharacter()
 	}
 
-	if *l.current != '"' {
-		return nil, fmt.Errorf("string declared at %s but never closed", tok.Position.String())
+	if l.current == nil || *l.current != '"' {
+		return nil, &errors.SyntaxError{Message: "string declared but never closed", Position: tok.Position.Clone()}
 	}
 
-	tok.value = string(value)
+	tok.Value = string(value)
 	return tok, nil
 }
 
 // buildNumber builds a number token and also defines if it is a float or an integer.
-func (l *Lexer) buildNumber() (*Token, error) {
+func (l *Lexer) buildNumber() (*Token, errors.Error) {
 	tok := NewToken(TokInteger, "", l.position)
 
 	var value []rune
 	points := 0
 
-	for l.current != nil && unicode.IsDigit(*l.current) || *l.current == '.' {
+	for l.current != nil && (unicode.IsDigit(*l.current) || *l.current == '.') {
 		if *l.current == '.' {
 			// Checks if a floating point has already been included.
 			// 1.0000 would pass
 			// 1.000.000 would fail etc
 			if points != 0 {
-				return nil, fmt.Errorf("invalid floating point defined at %s", tok.Position.String())
+				return nil, &errors.SyntaxError{Message: "invalid floating point defined", Position: tok.Position.Clone()}
 			}
 
 			points++
@@ -97,7 +97,12 @@ func (l *Lexer) buildNumber() (*Token, error) {
 		l.nextCharacter()
 	}
 
-	tok.value = string(value)
+	// This ensures that values of 123. or 1... etc cannot be tokenised.
+	if l.current != nil && *l.current == '.' {
+		return nil, &errors.SyntaxError{Message: "invalid floating point defined", Position: tok.Position.Clone()}
+	}
+
+	tok.Value = string(value)
 	return tok, nil
 }
 
@@ -107,18 +112,18 @@ func (l *Lexer) buildIdentifier() *Token {
 
 	var value []rune
 
-	for l.current != nil && unicode.IsLetter(*l.current) || unicode.IsDigit(*l.current) || *l.current == '_' {
+	for l.current != nil && (unicode.IsLetter(*l.current) || unicode.IsDigit(*l.current) || *l.current == '_') {
 		value = append(value, *l.current)
 		l.nextCharacter()
 	}
 
-	tok.value = string(value)
+	tok.Value = string(value)
 
-	if slices.Contains(Keywords, tok.value) {
+	if slices.Contains(Keywords, tok.Value) {
 		tok.Type = TokKeyword
 	}
 
-	if tok.value == "true" || tok.value == "false" {
+	if tok.Value == "true" || tok.Value == "false" {
 		tok.Type = TokBoolean
 	}
 
