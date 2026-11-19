@@ -10,13 +10,14 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
+		fmt.Println("Marble ~ https://github.com/mattyco/marble")
 		fmt.Printf("%s <file>\r\n", filepath.Base(os.Args[0]))
 		return
 	}
 
 	bytes, err := os.ReadFile(os.Args[1])
 	if err != nil {
-		fmt.Printf("Failed to read file '%s', error: %v", os.Args[1], err)
+		fmt.Printf("Failed to read file '%s', error: %v\r\n", os.Args[1], err)
 		return
 	}
 
