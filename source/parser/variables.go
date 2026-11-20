@@ -47,9 +47,12 @@ func (p *Parser) parseVariableDeclare() (ast.Node, errors.Error) {
 
 		p.nextToken()
 
-		// parse expression here.
-		node.Value = &ast.Continue{}
+		expression, err := p.parseExpression()
+		if err != nil {
+			return nil, err
+		}
 
+		node.Value = expression
 		return node, nil
 	}
 
@@ -95,9 +98,12 @@ func (p *Parser) parseConstantDeclare() (ast.Node, errors.Error) {
 
 		p.nextToken()
 
-		// parse expression here.
-		node.Value = &ast.Continue{}
+		expression, err := p.parseExpression()
+		if err != nil {
+			return nil, err
+		}
 
+		node.Value = expression
 		return node, nil
 	}
 
