@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/mattyco/marble/source/lexer"
+	"github.com/mattyco/marble/source/parser"
 )
 
 func main() {
@@ -27,7 +28,11 @@ func main() {
 		return
 	}
 
-	for _, tok := range tokens {
-		fmt.Println(tok.String())
+	programNode, error := parser.NewParser(tokens).Parse()
+	if error != nil {
+		fmt.Println(error.String())
+		return
 	}
+
+	fmt.Println(programNode.String())
 }
