@@ -15,7 +15,7 @@ var Keywords []string = []string{
 	"if", "elif", "else",
 	"for", "while", "continue", "break",
 	"int", "float", "string", "bool", "list",
-	"var", "const", "function", "class", "return",
+	"var", "const", "function", "return",
 }
 
 const (
@@ -50,7 +50,6 @@ const (
 	TokAnd                               // &&
 	TokOr                                // ||
 	TokColon                             // :
-	TokAt                                // @
 )
 
 // buildString builds a string token.
