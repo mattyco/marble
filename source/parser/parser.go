@@ -48,7 +48,33 @@ func (p *Parser) Parse() (ast.Node, errors.Error) {
 
 	nodes := make([]ast.Node, 0)
 
-	
+	for p.current != nil {
+		switch p.current.Type {
+		case lexer.TokKeyword:
+			switch p.current.Value {
+			case "var":
+				node, err := p.parseVariableDeclare()
+				if err != nil {
+					return nil, err
+				}
+
+				nodes = append(nodes, node)
+				p.nextToken()
+				continue
+			case "const":
+				node, err := p.parseConstantDeclare()
+				if err != nil {
+					return nil, err
+				}
+
+				nodes = append(nodes, node)
+				p.nextToken()
+				continue
+			}
+		}
+
+		p.nextToken()
+	}
 
 	return &ast.Program{Nodes: nodes}, nil
 }
