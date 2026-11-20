@@ -80,11 +80,11 @@ func (b *BinaryExpression) String() string {
 }
 
 func (v *VariableDeclaration) String() string {
-	return fmt.Sprintf("identifier(%s) = %s", v.Identifier.Value, v.Value.String())
+	return fmt.Sprintf("Variable:\n	identifier(%s) = %s", v.Identifier.Value, v.Value.String())
 }
 
 func (c *ConstantDeclaration) String() string {
-	return fmt.Sprintf("identifier(%s) = %s", c.Identifier.Value, c.Value.String())
+	return fmt.Sprintf("Constant:\n identifier(%s) = %s", c.Identifier.Value, c.Value.String())
 }
 
 func (c *Conditional) String() string {
