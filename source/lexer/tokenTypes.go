@@ -13,7 +13,7 @@ type TokenType int
 // Keywords is the dictionary of all recognised key language words.
 var Keywords []string = []string{
 	"if", "elif", "else",
-	"for", "while", "continue", "break",
+	"while", "continue", "break",
 	"int", "float", "string", "bool", "list",
 	"var", "const", "function", "return",
 }
