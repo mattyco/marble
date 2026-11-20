@@ -15,6 +15,10 @@ type Program struct {
 	Nodes []Node
 }
 
+type Body struct {
+	Nodes []Node
+}
+
 type Integer struct {
 	Value *lexer.Token
 }
@@ -51,7 +55,7 @@ type Identifier struct {
 }
 
 type CallExpression struct {
-	Value     *lexer.Token
+	Value     Node
 	Arguments []Node
 }
 
@@ -71,6 +75,17 @@ type ConstantDeclaration struct {
 	Value      Node
 }
 
+type Condition struct {
+	Condition   Node
+	Consequence Node
+}
+
+type Conditional struct {
+	Match   *Condition   // if
+	Other   []*Condition // elif branches
+	NoMatch Node         // else
+}
+
 func (p *Program) String() string {
 	values := make([]string, 0)
 
@@ -79,6 +94,16 @@ func (p *Program) String() string {
 	}
 
 	return strings.Join(values, "\n")
+}
+
+func (b *Body) String() string {
+	values := make([]string, 0)
+
+	for _, n := range b.Nodes {
+		values = append(values, n.String())
+	}
+
+	return "Body\n" + strings.Join(values, "\n")
 }
 
 func (i *Integer) String() string {
@@ -118,7 +143,7 @@ func (s *String) String() string {
 }
 
 func (c *CallExpression) String() string {
-	return fmt.Sprintf("identifier(%s(%s))", c.Value.Value, func() string {
+	return fmt.Sprintf("identifier(%s(%s))", c.Value.String(), func() string {
 		out := make([]string, len(c.Arguments))
 		for i, arg := range c.Arguments {
 			out[i] = arg.String()
@@ -141,4 +166,23 @@ func (v *VariableDeclaration) String() string {
 
 func (c *ConstantDeclaration) String() string {
 	return fmt.Sprintf("identifier(%s) = %s", c.Identifier.Value, c.Value.String())
+}
+
+func (c *Conditional) String() string {
+	var output strings.Builder
+
+	fmt.Fprintf(&output, "Conditional\n")
+	fmt.Fprintf(&output, "  Condition: %s\n", c.Match.Condition.String())
+	fmt.Fprintf(&output, "  Consequence: %s\n", c.Match.Consequence.String())
+
+	for _, branch := range c.Other {
+		fmt.Fprintf(&output, "  Elif:\n%s", branch.Condition.String())
+		fmt.Fprintf(&output, "  Consequence: %s\n", branch.Consequence.String())
+	}
+
+	if c.NoMatch != nil {
+		fmt.Fprintf(&output, "  Else:\n%s", c.NoMatch.String())
+	}
+
+	return output.String()
 }
