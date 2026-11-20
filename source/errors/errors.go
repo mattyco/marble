@@ -26,3 +26,8 @@ func (b *BaseError) String() string {
 type SyntaxError struct {
 	BaseError
 }
+
+// String returns the error in a string format; "Name: message at line 1, column 1".
+func (b *SyntaxError) String() string {
+	return fmt.Sprintf("SyntaxError: %s at %s", b.Message, b.Position.String())
+}
