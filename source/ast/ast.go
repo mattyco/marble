@@ -82,3 +82,19 @@ type Conditional struct {
 	Other   []*Condition // elif branches
 	NoMatch Node         // else
 }
+
+type Argument struct {
+	Identifier *lexer.Token // foo
+	Type       *lexer.Token // int, string, float, bool, list
+}
+
+type FunctionDeclare struct {
+	Identifier *lexer.Token
+	Arguments  []*Argument
+	Body       Node
+}
+
+type WhileCondition struct {
+	Condition Node
+	Body      Node
+}

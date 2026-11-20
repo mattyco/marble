@@ -105,3 +105,18 @@ func (c *Conditional) String() string {
 
 	return output.String()
 }
+
+func (f *FunctionDeclare) String() string {
+	var output strings.Builder
+
+	fmt.Fprintf(&output, "Function\n")
+	fmt.Fprintf(&output, "  Name: %s\n", f.Identifier.Value)
+
+	for _, arg := range f.Arguments {
+		fmt.Fprintf(&output, "  Argument: %s (%s)\n", arg.Identifier.Value, arg.Type.Value)
+	}
+
+	fmt.Fprintf(&output, "  Body: %s\n", f.Body.String())
+
+	return output.String()
+}
