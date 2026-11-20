@@ -22,7 +22,7 @@ func NewLexer(code []rune) *Lexer {
 	return &Lexer{
 		code:     code,
 		idx:      -1,
-		position: position.NewPosition(1, 1),
+		position: position.NewPosition(0, 1),
 		current:  nil,
 	}
 }
@@ -71,13 +71,13 @@ func (l *Lexer) Tokenise() ([]*Token, errors.Error) {
 	if l.position == nil {
 		// This ensures that the position of the token can be stored as intended, and also so that
 		// the nextCharacter function can process the position instead of dereferencing a nilpointer.
-		l.position = position.NewPosition(1, 1)
+		l.position = position.NewPosition(0, 1)
 	}
 
 	if l.idx != -1 {
 		// this is so it starts properly from the beginning of the code block.
 		l.idx = -1
-		l.position = position.NewPosition(1, 1)
+		l.position = position.NewPosition(0, 1)
 	}
 
 	// start at index 0, with the initial character.
