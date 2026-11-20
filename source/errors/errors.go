@@ -3,7 +3,7 @@ package errors
 import (
 	"fmt"
 
-	"github.com/mattyco/marble/source/position"
+	"github.com/mattyco/marble/source/lexer/position"
 )
 
 // Error is the template for a language error.

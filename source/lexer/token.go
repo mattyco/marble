@@ -3,7 +3,7 @@ package lexer
 import (
 	"fmt"
 
-	"github.com/mattyco/marble/source/position"
+	"github.com/mattyco/marble/source/lexer/position"
 )
 
 // Token contains the type, string value, and the position in the code block.

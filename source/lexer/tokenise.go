@@ -5,7 +5,7 @@ import (
 	"unicode"
 
 	"github.com/mattyco/marble/source/errors"
-	"github.com/mattyco/marble/source/position"
+	"github.com/mattyco/marble/source/lexer/position"
 )
 
 // Lexer reads through the code block and tokenises it into parseable tokens.
