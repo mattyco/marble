@@ -120,3 +120,25 @@ func (f *FunctionDeclare) String() string {
 
 	return output.String()
 }
+
+func (w *WhileCondition) String() string {
+	var output strings.Builder
+
+	fmt.Fprintf(&output, "While\n")
+	fmt.Fprintf(&output, "  Condition: %s\n", w.Condition.String())
+	fmt.Fprintf(&output, "  Body: %s\n", w.Body.String())
+
+	return output.String()
+}
+
+func (r *Return) String() string {
+	return fmt.Sprintf("return %s", r.Value.String())
+}
+
+func (c *Continue) String() string {
+	return "continue"
+}
+
+func (b *Break) Break() string {
+	return "break"
+}

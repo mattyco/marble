@@ -98,3 +98,16 @@ type WhileCondition struct {
 	Condition Node
 	Body      Node
 }
+
+type Return struct {
+	Token *lexer.Token
+	Value Node
+}
+
+type Continue struct {
+	Token *lexer.Token
+}
+
+type Break struct {
+	Token *lexer.Token
+}
