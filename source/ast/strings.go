@@ -62,7 +62,7 @@ func (s *String) String() string {
 }
 
 func (c *CallExpression) String() string {
-	return fmt.Sprintf("identifier(%s(%s))", c.Value.String(), func() string {
+	return fmt.Sprintf("%s(%s)", c.Value.String(), func() string {
 		out := make([]string, len(c.Arguments))
 		for i, arg := range c.Arguments {
 			out[i] = arg.String()
@@ -76,7 +76,7 @@ func (i *Identifier) String() string {
 }
 
 func (b *BinaryExpression) String() string {
-	return fmt.Sprintf("%s %s %s", b.Left.String(), b.Operator.String(), b.Right.String())
+	return fmt.Sprintf("Expression:\n	Left: %s\n	Operator: %s\n	Right: %s\n", b.Left.String(), b.Operator.String(), b.Right.String())
 }
 
 func (v *VariableDeclaration) String() string {
