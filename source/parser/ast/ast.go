@@ -64,11 +64,13 @@ type BinaryExpression struct {
 
 type VariableDeclaration struct {
 	Identifier *lexer.Token
+	Type       *lexer.Token
 	Value      Node
 }
 
 type ConstantDeclaration struct {
 	Identifier *lexer.Token
+	Type       *lexer.Token
 	Value      Node
 }
 
